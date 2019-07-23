@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">HPMDatabaseTutorial</string>
+    <string name="Load">Load</string>
+    <string name="Find">Find</string>
+    <string name="Add">Add</string>
+    <string name="Delete">Delete</string>
+    <string name="Update">Update</string>
+    <string-array name="person">
+        <item>Student</item>
+        <item>Teacher</item>
+    </string-array>
+
+</resources>
