@@ -106,16 +106,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void seeStudents(View view) {
         MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
-        Person person =
-                dbHandler.findHandler(personName.getText().toString(), spinnerPos);
-        if (person != null) {
-            lst.setText(String.valueOf(person.getId()) + " " + person.getName() + System.getProperty("line.separator"));
-            personId.setText("");
-            personName.setText("");
-        } else {
-            lst.setText("No Match Found");
-            personId.setText("");
-            personName.setText("");
+        lst.setText(dbHandler.loadTeacherStudents(Integer.parseInt(personId.getText().toString())));
+        personId.setText("");
+        personName.setText("");
+    }
+
+    public void assignStudentToTeacher(View view) {
+        MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
+        int idStudent = Integer.parseInt(personName.getText().toString());
+        int idTeacher = Integer.parseInt(personId.getText().toString());
+        boolean checkIfAssigned = dbHandler.assignStudent(idStudent, idTeacher);
+        if(checkIfAssigned){
+            Toast.makeText(this, "Student assigned succesfully!", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show();
         }
+        personId.setText("");
+        personName.setText("");
     }
 }
