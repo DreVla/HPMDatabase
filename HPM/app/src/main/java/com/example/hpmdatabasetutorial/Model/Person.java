@@ -1,6 +1,8 @@
 package com.example.hpmdatabasetutorial.Model;
 
-public class Person {
+import java.io.Serializable;
+
+public class Person implements Serializable {
     private int id;
     private String name;
 
@@ -24,5 +26,10 @@ public class Person {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return this.getId() + this.getName();
     }
 }

@@ -54,7 +54,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public ArrayList<Person> loadHandler(int pos) {
         ArrayList<Person> result = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Person person = new Person();
+
         String query;
         if(pos == 0) {
             query = "SELECT*FROM " + TABLE_STUDENT;
@@ -64,6 +64,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         }
         Cursor cursor = db.rawQuery(query, null);
         while (cursor.moveToNext()) {
+            Person person = new Person();
             person.setId(cursor.getInt(0));
             person.setName(cursor.getString(1));
             result.add(person);
@@ -72,6 +73,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         db.close();
         return result;
     }
+
     public void addHandler(Person person, int pos) {
         ContentValues values = new ContentValues();
         if(pos == 0) {
@@ -244,19 +246,20 @@ public class MyDBHandler extends SQLiteOpenHelper {
         }
     }
 
-    public String loadTeacherStudents(int teacherId) {
-        StringBuilder result = new StringBuilder();
+    public ArrayList<Integer> loadTeacherStudents(int teacherId) {
+        ArrayList<Integer> result = new ArrayList<>();
         String query = "SELECT*FROM " + TABLE_TEACHER_STUDENT + " WHERE " + COLUMN_TEACHER_ID + "= '" + String.valueOf(teacherId) + "'";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         while (cursor.moveToNext()) {
             int result_0 = cursor.getInt(0);
-            int result_1 = cursor.getInt(1);
-            result.append(result_1).append(" ").append(result_0).append(System.getProperty("line.separator"));
+//            int result_1 = cursor.getInt(1);
+//            result.append(result_1).append(" ").append(result_0).append(System.getProperty("line.separator"));
+            result.add(result_0);
         }
         cursor.close();
         db.close();
-        return result.toString();
+        return result;
     }
 
 

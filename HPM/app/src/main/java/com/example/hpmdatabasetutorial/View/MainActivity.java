@@ -3,12 +3,17 @@ package com.example.hpmdatabasetutorial.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.hpmdatabasetutorial.Model.Person;
 import com.example.hpmdatabasetutorial.R;
+import com.example.hpmdatabasetutorial.Utils.MyDBHandler;
 import com.example.hpmdatabasetutorial.Utils.MyPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 
@@ -55,8 +60,9 @@ public class MainActivity extends AppCompatActivity {
 //    }
 //
 //
+
 //    public void addStudent(View view) {
-//        spinnerPos = spinner.getSelectedItemPosition();
+////        spinnerPos = spinner.getSelectedItemPosition();
 //        MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
 //        int id = Integer.parseInt(personId.getText().toString());
 //        String name = personName.getText().toString();
@@ -84,18 +90,16 @@ public class MainActivity extends AppCompatActivity {
 //    }
 //
 //
-//    public void removeStudent(View view) {
-//        MyDBHandler dbHandler = new MyDBHandler(this, null,
-//                null, 1);
-//        boolean result = dbHandler.deleteHandler(Integer.parseInt(
-//                personId.getText().toString()), spinnerPos);
-//        if (result) {
-//            personId.setText("");
-//            personName.setText("");
-//            lst.setText("Record Deleted");
-//        } else
-//            personId.setText("No Match Found");
-//    }
+    public void removeStudent(View view) {
+        MyDBHandler dbHandler = new MyDBHandler(this, null,
+                null, 1);
+        boolean result = dbHandler.deleteHandler(Integer.parseInt(
+                personId.getText().toString()), spinnerPos);
+        if (result) {
+            Toast.makeText(this, "Removed!", Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+    }
 //
 //
 //    public void updateStudent(View view) {
