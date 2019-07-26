@@ -5,25 +5,22 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.hpmdatabasetutorial.Model.Person;
-import com.example.hpmdatabasetutorial.Model.Teacher;
 import com.example.hpmdatabasetutorial.R;
 import com.example.hpmdatabasetutorial.Utils.MyDBHandler;
 import com.example.hpmdatabasetutorial.Utils.RecyclerViewAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -47,7 +44,7 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        db = new MyDBHandler(this.getContext(),null,null,1);
+        db = new MyDBHandler(this.getContext(), null, null, 2);
 
         View viewRoot = inflater.inflate(R.layout.fragment_student, container, false);
 
@@ -55,28 +52,25 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
 
         recyclerView.setHasFixedSize(true);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext(),RecyclerView.VERTICAL,false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext(), RecyclerView.VERTICAL, false);
 
         recyclerView.setLayoutManager(linearLayoutManager);
         listTeachers = db.loadHandler(1);
-        adapter = new RecyclerViewAdapter(db.loadHandler(1),this.getContext(), setAdapterListener());
+        adapter = new RecyclerViewAdapter(db.loadHandler(1), this.getContext(), setAdapterListener());
 
         recyclerView.setAdapter(adapter);
 
         addTeacherButton = viewRoot.findViewById(R.id.student_fab);
         addTeacherButton.setOnClickListener(this);
-
-//        testText = viewRoot.findViewById(R.id.testtext);
-//        testText.setText(db.loadHandler(0).get(1).getName());
         return viewRoot;
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.student_fab:
-                Intent intent = new Intent(getActivity() , AddPersonActivity.class);
-                intent.putExtra("persons",1);
+                Intent intent = new Intent(getActivity(), AddPersonActivity.class);
+                intent.putExtra("persons", 1);
                 startActivityForResult(intent, 1);
         }
     }
@@ -84,13 +78,13 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1 && resultCode == -1) {
+        if (requestCode == 1 && resultCode == -1) {
             listTeachers = db.loadHandler(1);
             adapter.setPersonList(listTeachers);
         }
     }
 
-    public RecyclerViewAdapter.MyAdapterListener setAdapterListener(){
+    public RecyclerViewAdapter.MyAdapterListener setAdapterListener() {
         return new RecyclerViewAdapter.MyAdapterListener() {
             @Override
             public void iconImageViewOnClick(View v, final int position) {
@@ -100,7 +94,7 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        boolean result = db.deleteHandler((int) adapter.getItemId(position),0);
+                        boolean result = db.deleteHandler((int) adapter.getItemId(position), 1);
                         if (result) {
                             Toast.makeText(getContext(), "Removed!", Toast.LENGTH_SHORT).show();
                             listTeachers = db.loadHandler(1);
@@ -122,7 +116,7 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onItemClicked(int position) {
                 Person selected = listTeachers.get(position);
-                Intent intent = new Intent(getActivity(),DetailsActivity.class);
+                Intent intent = new Intent(getActivity(), DetailsActivity.class);
                 intent.putExtra("person", selected);
                 intent.putExtra("type", 1);
                 startActivityForResult(intent, 1);

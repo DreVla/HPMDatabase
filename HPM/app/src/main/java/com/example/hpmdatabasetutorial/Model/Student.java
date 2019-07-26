@@ -6,10 +6,17 @@ public class Student extends Person{
     private String studentName;
 
     // constructors
-    public Student() {}
+    public Student(String studentName) {
+        super(studentName);
+    }
     public Student(int id, String studentname) {
+        super(id, studentname);
         this.studentID = id;
         this.studentName = studentname;
+    }
+
+    public Student() {
+
     }
 
     // properties

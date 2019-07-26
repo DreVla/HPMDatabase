@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 //
     public void removeStudent(View view) {
         MyDBHandler dbHandler = new MyDBHandler(this, null,
-                null, 1);
+                null, 2);
         boolean result = dbHandler.deleteHandler(Integer.parseInt(
                 personId.getText().toString()), spinnerPos);
         if (result) {

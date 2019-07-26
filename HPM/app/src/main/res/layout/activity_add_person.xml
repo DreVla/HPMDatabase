@@ -4,19 +4,14 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
-    <EditText
-        android:layout_marginBottom="30dp"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:id="@+id/edit_text_student_id"
-        android:hint="ID"/>
 
     <EditText
         android:layout_marginBottom="30dp"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:id="@+id/edit_text_student_name"
-        android:hint="Name"/>
+        android:hint="Name"
+        android:focusable="true"/>
 
     <Button
         android:layout_width="wrap_content"

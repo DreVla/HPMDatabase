@@ -11,11 +11,18 @@ public class Teacher extends Person {
     private List<Student> students;
 
     // constructors
-    public Teacher() {}
+    public Teacher(String teacherName) {
+        super(teacherName);
+    }
     public Teacher(int id, String teacherName) {
+        super(teacherName);
         this.teacherID = id;
         this.teacherName = teacherName;
         students = new ArrayList<>();
+    }
+
+    public Teacher() {
+
     }
 
     // properties

@@ -37,7 +37,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.idTextView.setText(String.valueOf(personList.get(position).getId()));
         holder.nameTextView.setText(personList.get(position).getName());
 
     }
@@ -65,13 +64,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView idTextView;
         public TextView nameTextView;
         public ImageView deleteButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            idTextView = itemView.findViewById(R.id.item_id);
             nameTextView = itemView.findViewById(R.id.item_name);
             deleteButton = itemView.findViewById(R.id.remove_item_from_rv);
             itemView.setOnClickListener(new View.OnClickListener() {

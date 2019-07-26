@@ -1,10 +1,10 @@
 package com.example.hpmdatabasetutorial.Utils;
 
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteDatabase;
-import android.content.Context;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.hpmdatabasetutorial.Model.Person;
@@ -12,11 +12,10 @@ import com.example.hpmdatabasetutorial.Model.Student;
 import com.example.hpmdatabasetutorial.Model.Teacher;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MyDBHandler extends SQLiteOpenHelper {
     //information of database
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "classes.db";
     public static final String TABLE_STUDENT = "Student";
     public static final String TABLE_TEACHER = "Teacher";
@@ -32,34 +31,37 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public MyDBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
     }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TABLE_STUDENT = "CREATE TABLE " + TABLE_STUDENT + "(" + COLUMN_ID +
-                " INTEGER PRIMARY KEY, " + COLUMN_NAME + " TEXT )";
+                " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_NAME + " TEXT )";
         db.execSQL(CREATE_TABLE_STUDENT);
 
         String CREATE_TABLE_TEACHER = "CREATE TABLE " + TABLE_TEACHER + "(" + COLUMN_ID +
-                " INTEGER PRIMARY KEY, " + COLUMN_NAME + " TEXT )";
+                " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_NAME + " TEXT )";
         db.execSQL(CREATE_TABLE_TEACHER);
 
-        String CREATE_TABLE_TEACHER_STUDENT = "CREATE TABLE " + TABLE_TEACHER_STUDENT + "(" + COLUMN_ID + " INTEGER PRIMARY KEY, " +
-                                                                                            COLUMN_TEACHER_ID + " INTEGER, " +
-                                                                                            COLUMN_STUDENT_ID + " INTEGER)";
+        String CREATE_TABLE_TEACHER_STUDENT = "CREATE TABLE " + TABLE_TEACHER_STUDENT + "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_TEACHER_ID + " INTEGER, " +
+                COLUMN_STUDENT_ID + " INTEGER, " +
+                COLUMN_STUDENT_NAME + " TEXT )";
         db.execSQL(CREATE_TABLE_TEACHER_STUDENT);
 
     }
+
     @Override
-    public void onUpgrade(SQLiteDatabase db, int i, int i1) {}
+    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+    }
 
     public ArrayList<Person> loadHandler(int pos) {
         ArrayList<Person> result = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
 
         String query;
-        if(pos == 0) {
+        if (pos == 0) {
             query = "SELECT*FROM " + TABLE_STUDENT;
-        }
-        else {
+        } else {
             query = "SELECT*FROM " + TABLE_TEACHER;
         }
         Cursor cursor = db.rawQuery(query, null);
@@ -76,16 +78,14 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
     public void addHandler(Person person, int pos) {
         ContentValues values = new ContentValues();
-        if(pos == 0) {
+        if (pos == 0) {
 
-            values.put(COLUMN_ID, person.getId());
             values.put(COLUMN_NAME, person.getName());
             SQLiteDatabase db = this.getWritableDatabase();
             db.insert(TABLE_STUDENT, null, values);
             db.close();
-        } else if(pos == 1){
+        } else if (pos == 1) {
 
-            values.put(COLUMN_ID, person.getId());
             values.put(COLUMN_NAME, person.getName());
             SQLiteDatabase db = this.getWritableDatabase();
             db.insert(TABLE_TEACHER, null, values);
@@ -96,7 +96,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
     public Person findHandler(String name, int pos) {
 
-        if(pos == 0) {
+        if (pos == 0) {
             String query = "Select * FROM " + TABLE_STUDENT + " WHERE " + COLUMN_NAME + " = " + "'" + name + "'";
             SQLiteDatabase db = this.getWritableDatabase();
             Cursor cursor = db.rawQuery(query, null);
@@ -111,7 +111,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
             }
             db.close();
             return student;
-        } else if(pos == 1){
+        } else if (pos == 1) {
             String query = "Select * FROM " + TABLE_TEACHER + " WHERE " + COLUMN_NAME + " = " + "'" + name + "'";
             SQLiteDatabase db = this.getWritableDatabase();
             Cursor cursor = db.rawQuery(query, null);
@@ -132,7 +132,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
     public boolean deleteHandler(int ID, int pos) {
         boolean result = false;
-        if(pos == 0) {
+        if (pos == 0) {
             String query = "Select*FROM " + TABLE_STUDENT + " WHERE " + COLUMN_ID + "= '" + ID + "'";
             SQLiteDatabase db = this.getWritableDatabase();
             Cursor cursor = db.rawQuery(query, null);
@@ -159,7 +159,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
                 result = true;
             }
             db.close();
-        } else if(pos == 1){
+        } else if (pos == 1) {
             String query = "Select*FROM " + TABLE_TEACHER + " WHERE " + COLUMN_ID + "= '" + ID + "'";
             SQLiteDatabase db = this.getWritableDatabase();
             Cursor cursor = db.rawQuery(query, null);
@@ -189,10 +189,11 @@ public class MyDBHandler extends SQLiteOpenHelper {
         }
         return result;
     }
+
     public boolean updateHandler(int ID, String name, int pos) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues args = new ContentValues();
-        if(pos == 0){
+        if (pos == 0) {
             args.put(COLUMN_ID, ID);
             args.put(COLUMN_NAME, name);
             return db.update(TABLE_STUDENT, args, COLUMN_ID + "=" + ID, null) > 0;
@@ -203,7 +204,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         }
     }
 
-    public boolean assignStudent(int idStudent, int idTeacher) {
+    public boolean assignStudent(Person student, int idTeacher) {
         ContentValues values = new ContentValues();
         String query = "Select * FROM " + TABLE_TEACHER + " WHERE " + COLUMN_ID + " = " + "'" + idTeacher + "'";
         SQLiteDatabase db = this.getWritableDatabase();
@@ -217,53 +218,58 @@ public class MyDBHandler extends SQLiteOpenHelper {
         } else {
             teacher = null;
         }
-        if(teacher != null){
-            String query2 = "Select * FROM " + TABLE_STUDENT + " WHERE " + COLUMN_ID + " = " + "'" + idStudent + "'";
+        if (teacher != null) {
+            String query2 = "SELECT * FROM " + TABLE_TEACHER_STUDENT + " WHERE " + COLUMN_STUDENT_ID + " = " + "'" + student.getId() + "'";
             Cursor cursor2 = db.rawQuery(query2, null);
-            Student student = new Student();
             if (cursor2.moveToFirst()) {
-                cursor2.moveToFirst();
-                student.setID(Integer.parseInt(cursor2.getString(0)));
-                student.setStudentName(cursor2.getString(1));
-                cursor2.close();
-            } else {
-                Log.d("TeacherStudent", "assignStudent: Student not found");
+                Log.d("TeacherStudent", "assignStudent: Student already assigned");
                 db.close();
                 return false;
-            }
-            values.put(COLUMN_STUDENT_ID, idStudent);
-            values.put(COLUMN_TEACHER_ID, idTeacher);
-            db.insert(TABLE_TEACHER_STUDENT, null, values);
+            } else {
+                values.put(COLUMN_STUDENT_ID, student.getId());
+                values.put(COLUMN_TEACHER_ID, idTeacher);
+                values.put(COLUMN_STUDENT_NAME, student.getName());
+                db.insert(TABLE_TEACHER_STUDENT, null, values);
 //            teacher.addStudent(student);
-            Log.d("TeacherStudent", "assignStudent: Added student " + idStudent + " to teacher " + idTeacher);
-            db.close();
-            return true;
+                Log.d("TeacherStudent", "assignStudent: Added student " + student.getId() + " to teacher " + idTeacher);
+                cursor2.close();
+                db.close();
+                return true;
+            }
 
-        }else {
+        } else {
             Log.d("TeacherStudent", "assignStudent: Teacher not found");
             db.close();
             return false;
         }
     }
 
-    public ArrayList<Integer> loadTeacherStudents(int teacherId) {
-        ArrayList<Integer> result = new ArrayList<>();
+    public void deassignStudent(int studentId, int idTeacher) {
+//        ContentValues values = new ContentValues();
+//        String query = "DELETE FROM " + TABLE_TEACHER + " WHERE " + COLUMN_ID + " = " + "'" + idTeacher + "'" + " AND " + COLUMN_STUDENT_ID + " = " + "'" + studentId + "'";
+        SQLiteDatabase db = this.getWritableDatabase();
+        String[] args = {String.valueOf(idTeacher), String.valueOf(studentId)};
+        db.delete("TeacherStudent", "teacherID=? and studentID=?",args);
+//        Cursor cursor = db.rawQuery(query, null);
+//        cursor.close();
+        db.close();
+    }
+
+    public ArrayList<Person> loadTeacherStudents(int teacherId) {
+        ArrayList<Person> result = new ArrayList<>();
         String query = "SELECT*FROM " + TABLE_TEACHER_STUDENT + " WHERE " + COLUMN_TEACHER_ID + "= '" + String.valueOf(teacherId) + "'";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         while (cursor.moveToNext()) {
-            int result_0 = cursor.getInt(0);
-//            int result_1 = cursor.getInt(1);
-//            result.append(result_1).append(" ").append(result_0).append(System.getProperty("line.separator"));
-            result.add(result_0);
+            int resultId = cursor.getInt(2);
+            String resultName = cursor.getString(3);
+            result.add(new Person(resultId, resultName));
+            Log.d("LoadTeacherStudents", "loadTeacherStudents: " + resultId + " " + resultName);
         }
         cursor.close();
         db.close();
         return result;
     }
-
-
-
 
 
 }
