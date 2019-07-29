@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import com.example.hpmdatabasetutorial.View.StudentFragment;
 import com.example.hpmdatabasetutorial.View.TeacherFragment;
 
+// Pager adapter pentru fragmentele de student si profesor
+
 public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
     public MyPagerAdapter(FragmentManager fm){

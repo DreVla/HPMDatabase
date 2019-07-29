@@ -5,6 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -21,6 +24,8 @@ import com.example.hpmdatabasetutorial.Model.Person;
 import com.example.hpmdatabasetutorial.R;
 import com.example.hpmdatabasetutorial.Utils.MyDBHandler;
 import com.example.hpmdatabasetutorial.Utils.TeacherStudentAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -47,9 +52,9 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        db = new MyDBHandler(this, null, null, 2);
+        db = new MyDBHandler(this);
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         editButton = findViewById(R.id.details_edit_button);
         saveButton = findViewById(R.id.details_save_button);
@@ -90,20 +95,39 @@ public class DetailsActivity extends AppCompatActivity {
 
     }
 
-    private void loadStudentsOfTeacher(int teacherId) {
-        students = db.loadTeacherStudents(teacherId);
-//        Log.d("TeacherStudents", "loadStudentsOfTeacher: " + students.get(0).toString());
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.edit_menu, menu);
+        return true;
     }
 
-    public void allowEdit(View view) {
+    @Override
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.details_edit_button:
+                allowEdit();
+                return true;
+            case R.id.details_save_button:
+                updatePerson();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void loadStudentsOfTeacher(int teacherId) {
+        students = db.loadTeacherStudents(teacherId);
+    }
+
+    public void allowEdit() {
         detailsText.setEnabled(true);
         detailsTitle.setEnabled(true);
     }
 
-    public void updatePerson(View view) {
-        MyDBHandler dbHandler = new MyDBHandler(this, null,
-                null, 1);
-        Log.d("AdvancedDetails", "updatePerson: " + detailsTitle.getText());
+    public void updatePerson() {
+        MyDBHandler dbHandler = new MyDBHandler(this);
         boolean result = dbHandler.updateHandler(Integer.parseInt(
                 detailsText.getText().toString()), detailsTitle.getText().toString(), type);
         if (result) {

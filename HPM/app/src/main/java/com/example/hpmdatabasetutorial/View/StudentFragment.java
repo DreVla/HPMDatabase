@@ -46,7 +46,7 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        db = new MyDBHandler(this.getContext(), null, null, 2);
+        db = new MyDBHandler(this.getContext());
 
         View viewRoot = inflater.inflate(R.layout.fragment_student, container, false);
 
@@ -85,8 +85,7 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == -1) {
-            listStudents = db.loadHandler(0);
-            adapter.setPersonList(listStudents);
+            reloadRV();
         }
     }
 
@@ -103,8 +102,7 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
                         boolean result = db.deleteHandler((int) adapter.getItemId(position), 0);
                         if (result) {
                             Toast.makeText(getContext(), "Removed!", Toast.LENGTH_SHORT).show();
-                            listStudents = db.loadHandler(0);
-                            adapter.setPersonList(listStudents);
+                            reloadRV();
                         } else
                             Toast.makeText(getContext(), "Something went wrong!", Toast.LENGTH_SHORT).show();
                     }
@@ -121,7 +119,7 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onItemClicked(int position) {
-                Person selected = listStudents.get(position);
+                Person selected = db.findHandler(listStudents.get(position).getId(), 0);
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
                 intent.putExtra("person", selected);
                 intent.putExtra("type", 0);
@@ -130,4 +128,16 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
         };
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        reloadRV();
+    }
+
+    // method to easily reload recycler view
+
+    public void reloadRV(){
+        listStudents = db.loadHandler(0);
+        adapter.setPersonList(listStudents);
+    }
 }

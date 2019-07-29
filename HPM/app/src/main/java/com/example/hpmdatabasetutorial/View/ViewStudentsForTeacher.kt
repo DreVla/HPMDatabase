@@ -29,7 +29,7 @@ class ViewStudentsForTeacher : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_students_for_teacher)
-        db = MyDBHandler(this, null, null, 2)
+        db = MyDBHandler(this)
         students = db.loadHandler(0)
         viewManager = LinearLayoutManager(this)
         viewAdapter = TeacherSeeStudentsAdapter(students)
@@ -46,7 +46,6 @@ class ViewStudentsForTeacher : AppCompatActivity() {
 
     fun assignStudentsToTeacher(view: View) {
         studentsToAssign = viewAdapter.returnCheckedStudents()
-        Log.d("First Checked Student", studentsToAssign[0].name)
         for (student in studentsToAssign) {
             assignStudentToTeacher(view, student, idTeacher)
         }
@@ -56,7 +55,7 @@ class ViewStudentsForTeacher : AppCompatActivity() {
 
 
     fun assignStudentToTeacher(view: View, student: Person, idTeacher: Int) {
-        val dbHandler = MyDBHandler(this, null, null, 2)
+        val dbHandler = MyDBHandler(this)
         val checkIfAssigned = dbHandler.assignStudent(student, idTeacher)
         if (checkIfAssigned) {
             Toast.makeText(this, "Student assigned succesfully!", Toast.LENGTH_SHORT).show()

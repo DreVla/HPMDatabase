@@ -44,7 +44,7 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        db = new MyDBHandler(this.getContext(), null, null, 2);
+        db = new MyDBHandler(this.getContext());
 
         View viewRoot = inflater.inflate(R.layout.fragment_student, container, false);
 
@@ -79,8 +79,7 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == -1) {
-            listTeachers = db.loadHandler(1);
-            adapter.setPersonList(listTeachers);
+            reloadRV();
         }
     }
 
@@ -97,8 +96,7 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
                         boolean result = db.deleteHandler((int) adapter.getItemId(position), 1);
                         if (result) {
                             Toast.makeText(getContext(), "Removed!", Toast.LENGTH_SHORT).show();
-                            listTeachers = db.loadHandler(1);
-                            adapter.setPersonList(listTeachers);
+                            reloadRV();
                         } else
                             Toast.makeText(getContext(), "Something went wrong!", Toast.LENGTH_SHORT).show();
                     }
@@ -115,13 +113,24 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onItemClicked(int position) {
-                Person selected = listTeachers.get(position);
+                Person selected = db.findHandler(listTeachers.get(position).getId(), 1);
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
                 intent.putExtra("person", selected);
                 intent.putExtra("type", 1);
                 startActivityForResult(intent, 1);
             }
         };
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        reloadRV();
+    }
+
+    public void reloadRV(){
+        listTeachers = db.loadHandler(1);
+        adapter.setPersonList(listTeachers);
     }
 
 }

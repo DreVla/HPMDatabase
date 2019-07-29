@@ -19,7 +19,7 @@ class TeacherSeeStudentsAdapter(private val myDataSet: ArrayList<Person>) : Recy
     private lateinit var studentsToAdd: ArrayList<Person>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeacherSeeStudentsViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(com.example.hpmdatabasetutorial.R.layout.teacher_see_all_students_item, parent, false) as View
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.teacher_see_all_students_item, parent, false) as View
 
         return TeacherSeeStudentsViewHolder(view)
     }
@@ -36,15 +36,11 @@ class TeacherSeeStudentsAdapter(private val myDataSet: ArrayList<Person>) : Recy
         }
     }
 
-
-
     override fun getItemCount() = myDataSet.size
 
     fun returnCheckedStudents(): ArrayList<Person> {
         return studentsToAdd;
     }
-
-
 
     inner class TeacherSeeStudentsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 

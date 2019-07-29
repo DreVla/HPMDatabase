@@ -12,7 +12,6 @@ import com.example.hpmdatabasetutorial.Utils.MyDBHandler;
 
 public class AddPersonActivity extends AppCompatActivity {
 
-    public EditText personId;
     public EditText personName;
     public int personToAdd;
 
@@ -26,7 +25,7 @@ public class AddPersonActivity extends AppCompatActivity {
     }
 
     public void addStudent(View view) {
-        MyDBHandler dbHandler = new MyDBHandler(this, null, null, 2);
+        MyDBHandler dbHandler = new MyDBHandler(this);
         String name = personName.getText().toString();
         Person person = new Person(name);
         dbHandler.addHandler(person, personToAdd);

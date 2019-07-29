@@ -56,12 +56,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         notifyDataSetChanged();
     }
 
-    public void removeAt(int position) {
-        personList.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, personList.size());
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView nameTextView;

@@ -25,11 +25,10 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public static final String COLUMN_STUDENT_NAME = "studentName";
     public static final String COLUMN_STUDENT_ID = "studentID";
     public static final String COLUMN_TEACHER_ID = "teacherID";
-    public static final String COLUMN_TEACHER_NAME = "teacherName";
 
     //initialize the database
-    public MyDBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, DATABASE_NAME, factory, DATABASE_VERSION);
+    public MyDBHandler(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
@@ -44,8 +43,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
         String CREATE_TABLE_TEACHER_STUDENT = "CREATE TABLE " + TABLE_TEACHER_STUDENT + "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_TEACHER_ID + " INTEGER, " +
-                COLUMN_STUDENT_ID + " INTEGER, " +
-                COLUMN_STUDENT_NAME + " TEXT )";
+                COLUMN_STUDENT_ID + " INTEGER) " ;
         db.execSQL(CREATE_TABLE_TEACHER_STUDENT);
 
     }
@@ -54,10 +52,12 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
     }
 
+    // Metoda folosita sa incarce datele dintr-un tabel in functie de parametru dat
+
     public ArrayList<Person> loadHandler(int pos) {
+        // pos folosit pentru identificare student/prof
         ArrayList<Person> result = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-
         String query;
         if (pos == 0) {
             query = "SELECT*FROM " + TABLE_STUDENT;
@@ -76,133 +76,98 @@ public class MyDBHandler extends SQLiteOpenHelper {
         return result;
     }
 
+    // Metoda de adaugara intr-un tabel in functie de parametrii dati
+
     public void addHandler(Person person, int pos) {
         ContentValues values = new ContentValues();
+        SQLiteDatabase db = this.getWritableDatabase();
         if (pos == 0) {
-
             values.put(COLUMN_NAME, person.getName());
-            SQLiteDatabase db = this.getWritableDatabase();
             db.insert(TABLE_STUDENT, null, values);
-            db.close();
-        } else if (pos == 1) {
-
+        } else {
             values.put(COLUMN_NAME, person.getName());
-            SQLiteDatabase db = this.getWritableDatabase();
             db.insert(TABLE_TEACHER, null, values);
-            db.close();
         }
-
+        db.close();
     }
 
-    public Person findHandler(String name, int pos) {
+    // Metoda de cautare intr-un tabel in functie de parametrul dat
 
+    public Person findHandler(int idGiven, int pos) {
+        String query;
         if (pos == 0) {
-            String query = "Select * FROM " + TABLE_STUDENT + " WHERE " + COLUMN_NAME + " = " + "'" + name + "'";
-            SQLiteDatabase db = this.getWritableDatabase();
-            Cursor cursor = db.rawQuery(query, null);
-            Student student = new Student();
-            if (cursor.moveToFirst()) {
-                cursor.moveToFirst();
-                student.setID(Integer.parseInt(cursor.getString(0)));
-                student.setStudentName(cursor.getString(1));
-                cursor.close();
-            } else {
-                student = null;
-            }
-            db.close();
-            return student;
-        } else if (pos == 1) {
-            String query = "Select * FROM " + TABLE_TEACHER + " WHERE " + COLUMN_NAME + " = " + "'" + name + "'";
-            SQLiteDatabase db = this.getWritableDatabase();
-            Cursor cursor = db.rawQuery(query, null);
-            Teacher teacher = new Teacher();
-            if (cursor.moveToFirst()) {
-                cursor.moveToFirst();
-                teacher.setID(Integer.parseInt(cursor.getString(0)));
-                teacher.setTeacherName(cursor.getString(1));
-                cursor.close();
-            } else {
-                teacher = null;
-            }
-            db.close();
-            return teacher;
+            query = "Select * FROM " + TABLE_STUDENT + " WHERE " + COLUMN_ID + " = " + "'" + idGiven + "'";
+        } else {
+            query = "Select * FROM " + TABLE_TEACHER + " WHERE " + COLUMN_ID + " = " + "'" + idGiven + "'";
         }
-        return null;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        Person person = new Person();
+        if (cursor.moveToFirst()) {
+            cursor.moveToFirst();
+            person.setId(Integer.parseInt(cursor.getString(0)));
+            person.setName(cursor.getString(1));
+            cursor.close();
+        } else {
+            person = null;
+        }
+        db.close();
+        return person;
     }
+
+    // Metoda de stergere dintr-un tabel
 
     public boolean deleteHandler(int ID, int pos) {
         boolean result = false;
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query1,query2;
+        String actionTable, actionColumn;
         if (pos == 0) {
-            String query = "Select*FROM " + TABLE_STUDENT + " WHERE " + COLUMN_ID + "= '" + ID + "'";
-            SQLiteDatabase db = this.getWritableDatabase();
-            Cursor cursor = db.rawQuery(query, null);
-            Student student = new Student();
-            if (cursor.moveToFirst()) {
-                student.setID(Integer.parseInt(cursor.getString(0)));
-                db.delete(TABLE_STUDENT, COLUMN_ID + "=?",
-                        new String[]{
-                                String.valueOf(student.getID())
-                        });
-                cursor.close();
-                result = true;
-            }
-            String query2 = "SELECT*FROM " + TABLE_TEACHER_STUDENT + " WHERE " + COLUMN_STUDENT_ID + "= '" + ID + "'";
-            Cursor cursor2 = db.rawQuery(query2, null);
-            Student student2 = new Student();
-            if (cursor2.moveToFirst()) {
-                student2.setID(Integer.parseInt(cursor2.getString(1)));
-                db.delete(TABLE_TEACHER_STUDENT, COLUMN_STUDENT_ID + "=?",
-                        new String[]{
-                                String.valueOf(student2.getID())
-                        });
-                cursor2.close();
-                result = true;
-            }
-            db.close();
-        } else if (pos == 1) {
-            String query = "Select*FROM " + TABLE_TEACHER + " WHERE " + COLUMN_ID + "= '" + ID + "'";
-            SQLiteDatabase db = this.getWritableDatabase();
-            Cursor cursor = db.rawQuery(query, null);
-            Teacher teacher = new Teacher();
-            if (cursor.moveToFirst()) {
-                teacher.setID(Integer.parseInt(cursor.getString(0)));
-                db.delete(TABLE_TEACHER, COLUMN_ID + "=?",
-                        new String[]{
-                                String.valueOf(teacher.getID())
-                        });
-                cursor.close();
-                result = true;
-            }
-            String query2 = "SELECT*FROM " + TABLE_TEACHER_STUDENT + " WHERE " + COLUMN_TEACHER_ID + "= '" + ID + "'";
-            Cursor cursor2 = db.rawQuery(query2, null);
-            Teacher teacher2 = new Teacher();
-            if (cursor2.moveToFirst()) {
-                teacher2.setID(Integer.parseInt(cursor2.getString(0)));
-                db.delete(TABLE_TEACHER_STUDENT, COLUMN_TEACHER_ID + "=?",
-                        new String[]{
-                                String.valueOf(teacher2.getID())
-                        });
-                cursor2.close();
-                result = true;
-            }
-            db.close();
+            actionTable = TABLE_STUDENT;
+            actionColumn = COLUMN_STUDENT_ID;
+            query1 = "SELECT*FROM " + TABLE_STUDENT + " WHERE " + COLUMN_ID + "= '" + ID + "'";
+            query2 = "SELECT*FROM " + TABLE_TEACHER_STUDENT + " WHERE " + COLUMN_STUDENT_ID + "= '" + ID + "'";
+        } else {
+            actionTable = TABLE_TEACHER;
+            actionColumn = COLUMN_TEACHER_ID;
+            query1 = "SELECT*FROM " + TABLE_TEACHER + " WHERE " + COLUMN_ID + "= '" + ID + "'";
+            query2 = "SELECT*FROM " + TABLE_TEACHER_STUDENT + " WHERE " + COLUMN_TEACHER_ID + "= '" + ID + "'";
         }
+        Cursor cursor = db.rawQuery(query1,null);
+        Person person = new Person();
+        if (cursor.moveToFirst()) {
+            person.setId(Integer.parseInt(cursor.getString(0)));
+            db.delete(actionTable, COLUMN_ID + "=?", new String[]{String.valueOf(person.getId())});
+            result = true;
+        }
+        cursor = db.rawQuery(query2, null);
+        Person person1 = new Person();
+        if (cursor.moveToFirst()) {
+            Log.d("DeleteFromTT", "deleteHandler: " + cursor.getString(0));
+            person1.setId(Integer.parseInt(cursor.getString(0)));
+            db.delete(TABLE_TEACHER_STUDENT, actionColumn + "=?", new String[]{String.valueOf(person1.getId())});
+            cursor.close();
+            result = true;
+        }
+            db.close();
         return result;
     }
+
+    // Metoda de updatare a unui element deja existent in tabel
 
     public boolean updateHandler(int ID, String name, int pos) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues args = new ContentValues();
+        args.put(COLUMN_ID, ID);
+        args.put(COLUMN_NAME, name);
         if (pos == 0) {
-            args.put(COLUMN_ID, ID);
-            args.put(COLUMN_NAME, name);
             return db.update(TABLE_STUDENT, args, COLUMN_ID + "=" + ID, null) > 0;
         } else {
-            args.put(COLUMN_ID, ID);
-            args.put(COLUMN_NAME, name);
             return db.update(TABLE_TEACHER, args, COLUMN_ID + "=" + ID, null) > 0;
         }
     }
+
+    // Metoda de asignare a unui student la un profesor
 
     public boolean assignStudent(Person student, int idTeacher) {
         ContentValues values = new ContentValues();
@@ -219,7 +184,8 @@ public class MyDBHandler extends SQLiteOpenHelper {
             teacher = null;
         }
         if (teacher != null) {
-            String query2 = "SELECT * FROM " + TABLE_TEACHER_STUDENT + " WHERE " + COLUMN_STUDENT_ID + " = " + "'" + student.getId() + "'";
+            String query2 = "SELECT * FROM " + TABLE_TEACHER_STUDENT + " WHERE " + COLUMN_STUDENT_ID + " = " + "'" + student.getId() + "'" +
+                    " AND " + COLUMN_TEACHER_ID + " = " + "'" + idTeacher + "'";
             Cursor cursor2 = db.rawQuery(query2, null);
             if (cursor2.moveToFirst()) {
                 Log.d("TeacherStudent", "assignStudent: Student already assigned");
@@ -228,15 +194,12 @@ public class MyDBHandler extends SQLiteOpenHelper {
             } else {
                 values.put(COLUMN_STUDENT_ID, student.getId());
                 values.put(COLUMN_TEACHER_ID, idTeacher);
-                values.put(COLUMN_STUDENT_NAME, student.getName());
                 db.insert(TABLE_TEACHER_STUDENT, null, values);
-//            teacher.addStudent(student);
                 Log.d("TeacherStudent", "assignStudent: Added student " + student.getId() + " to teacher " + idTeacher);
                 cursor2.close();
                 db.close();
                 return true;
             }
-
         } else {
             Log.d("TeacherStudent", "assignStudent: Teacher not found");
             db.close();
@@ -244,25 +207,26 @@ public class MyDBHandler extends SQLiteOpenHelper {
         }
     }
 
+    // Metoda de deasignare a unui student de la un profesor
+
     public void deassignStudent(int studentId, int idTeacher) {
-//        ContentValues values = new ContentValues();
-//        String query = "DELETE FROM " + TABLE_TEACHER + " WHERE " + COLUMN_ID + " = " + "'" + idTeacher + "'" + " AND " + COLUMN_STUDENT_ID + " = " + "'" + studentId + "'";
         SQLiteDatabase db = this.getWritableDatabase();
         String[] args = {String.valueOf(idTeacher), String.valueOf(studentId)};
         db.delete("TeacherStudent", "teacherID=? and studentID=?",args);
-//        Cursor cursor = db.rawQuery(query, null);
-//        cursor.close();
         db.close();
     }
 
+    // Incarca toti studentii asignati la un  profesor
+
     public ArrayList<Person> loadTeacherStudents(int teacherId) {
         ArrayList<Person> result = new ArrayList<>();
-        String query = "SELECT*FROM " + TABLE_TEACHER_STUDENT + " WHERE " + COLUMN_TEACHER_ID + "= '" + String.valueOf(teacherId) + "'";
+        String query = "SELECT*FROM " + TABLE_TEACHER_STUDENT + " INNER JOIN " + TABLE_STUDENT + " ON " + TABLE_STUDENT + "." + COLUMN_ID + " = " + TABLE_TEACHER_STUDENT + "." + COLUMN_STUDENT_ID +
+                " WHERE " + COLUMN_TEACHER_ID + "= '" + teacherId + "'";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         while (cursor.moveToNext()) {
-            int resultId = cursor.getInt(2);
-            String resultName = cursor.getString(3);
+            int resultId = cursor.getInt(3);
+            String resultName = cursor.getString(4);
             result.add(new Person(resultId, resultName));
             Log.d("LoadTeacherStudents", "loadTeacherStudents: " + resultId + " " + resultName);
         }
