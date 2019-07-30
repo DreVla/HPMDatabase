@@ -1,53 +1,56 @@
 package com.example.hpmdatabasetutorial.Model;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity(tableName = "teacher")
 public class Teacher extends Person {
 
     // fields
-    private int teacherID;
+    @ColumnInfo(name = "teacher_id")
+    @PrimaryKey(autoGenerate = true)
+    private int teacherId;
+    @ColumnInfo(name = "teacher_name")
     private String teacherName;
-    private List<Student> students;
 
     // constructors
+    @Ignore
     public Teacher(String teacherName) {
         super(teacherName);
     }
-    public Teacher(int id, String teacherName) {
-        super(teacherName);
-        this.teacherID = id;
-        this.teacherName = teacherName;
-        students = new ArrayList<>();
-    }
+//
+//    @Ignore
+//    public Teacher(int id, String teacherName) {
+//        super(teacherName);
+//        this.teacherId = id;
+//        this.teacherName = teacherName;
+//    }
 
     public Teacher() {
 
     }
 
     // properties
-    public void setID(int id) {
-        this.teacherID = id;
+
+
+    public int getTeacherId() {
+        return teacherId;
     }
-    public int getID() {
-        return this.teacherID;
+
+    public void setTeacherId(int teacherId) {
+        this.teacherId = teacherId;
     }
+
+    public String getTeacherName() {
+        return teacherName;
+    }
+
     public void setTeacherName(String teacherName) {
         this.teacherName = teacherName;
-    }
-    public String getTeacherName() {
-        return this.teacherName;
-    }
-
-    public void addStudent(Student student){
-        students.add(student);
-    }
-
-    public List<Student> getStudents() {
-        return students;
-    }
-
-    public void setStudents(List<Student> students) {
-        this.students = students;
     }
 }

@@ -177,8 +177,8 @@ public class MyDBHandler extends SQLiteOpenHelper {
         Teacher teacher = new Teacher();
         if (cursor.moveToFirst()) {
             cursor.moveToFirst();
-            teacher.setID(Integer.parseInt(cursor.getString(0)));
-            teacher.setTeacherName(cursor.getString(1));
+            teacher.setId(Integer.parseInt(cursor.getString(0)));
+            teacher.setName(cursor.getString(1));
             cursor.close();
         } else {
             teacher = null;
@@ -188,20 +188,20 @@ public class MyDBHandler extends SQLiteOpenHelper {
                     " AND " + COLUMN_TEACHER_ID + " = " + "'" + idTeacher + "'";
             Cursor cursor2 = db.rawQuery(query2, null);
             if (cursor2.moveToFirst()) {
-                Log.d("TeacherStudent", "assignStudent: Student already assigned");
+                Log.d("TeacherStudentDAO", "assignStudent: Student already assigned");
                 db.close();
                 return false;
             } else {
                 values.put(COLUMN_STUDENT_ID, student.getId());
                 values.put(COLUMN_TEACHER_ID, idTeacher);
                 db.insert(TABLE_TEACHER_STUDENT, null, values);
-                Log.d("TeacherStudent", "assignStudent: Added student " + student.getId() + " to teacher " + idTeacher);
+                Log.d("TeacherStudentDAO", "assignStudent: Added student " + student.getId() + " to teacher " + idTeacher);
                 cursor2.close();
                 db.close();
                 return true;
             }
         } else {
-            Log.d("TeacherStudent", "assignStudent: Teacher not found");
+            Log.d("TeacherStudentDAO", "assignStudent: Teacher not found");
             db.close();
             return false;
         }
@@ -212,7 +212,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public void deassignStudent(int studentId, int idTeacher) {
         SQLiteDatabase db = this.getWritableDatabase();
         String[] args = {String.valueOf(idTeacher), String.valueOf(studentId)};
-        db.delete("TeacherStudent", "teacherID=? and studentID=?",args);
+        db.delete("TeacherStudentDAO", "teacherID=? and studentID=?",args);
         db.close();
     }
 

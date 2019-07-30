@@ -8,15 +8,16 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hpmdatabasetutorial.Model.Person
+import com.example.hpmdatabasetutorial.Model.Student
 import com.example.hpmdatabasetutorial.R
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class TeacherSeeStudentsAdapter(private val myDataSet: ArrayList<Person>) : RecyclerView.Adapter<TeacherSeeStudentsAdapter.TeacherSeeStudentsViewHolder>() {
+class TeacherSeeStudentsAdapter(private val myDataSet: MutableList<Student>) : RecyclerView.Adapter<TeacherSeeStudentsAdapter.TeacherSeeStudentsViewHolder>() {
 
 
-    private lateinit var studentsToAdd: ArrayList<Person>
+    private lateinit var studentsToAdd: MutableList<Student>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeacherSeeStudentsViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.teacher_see_all_students_item, parent, false) as View
@@ -25,8 +26,8 @@ class TeacherSeeStudentsAdapter(private val myDataSet: ArrayList<Person>) : Recy
     }
 
     override fun onBindViewHolder(holder: TeacherSeeStudentsViewHolder, position: Int) {
-        studentsToAdd = arrayListOf()
-        holder.studentName.text = myDataSet[position].name
+        studentsToAdd = mutableListOf()
+        holder.studentName.text = myDataSet[position].studentName
         holder.checkBox.setOnCheckedChangeListener { compoundButton, isChecked ->
             if(isChecked){
                 studentsToAdd.add(myDataSet[position])
@@ -38,7 +39,7 @@ class TeacherSeeStudentsAdapter(private val myDataSet: ArrayList<Person>) : Recy
 
     override fun getItemCount() = myDataSet.size
 
-    fun returnCheckedStudents(): ArrayList<Person> {
+    fun returnCheckedStudents(): MutableList<Student> {
         return studentsToAdd;
     }
 

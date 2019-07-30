@@ -1,35 +1,55 @@
 package com.example.hpmdatabasetutorial.Model;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "student")
 public class Student extends Person{
     // fields
-    private int studentID;
+    @ColumnInfo(name = "student_id")
+    @PrimaryKey(autoGenerate = true)
+    private int studentId;
+    @ColumnInfo(name = "student_name")
     private String studentName;
 
     // constructors
+    @Ignore
     public Student(String studentName) {
         super(studentName);
     }
-    public Student(int id, String studentname) {
-        super(id, studentname);
-        this.studentID = id;
-        this.studentName = studentname;
-    }
+//    @Ignore
+//    public Student(int id, String studentname) {
+//        super(id, studentname);
+//        this.studentId = id;
+//        this.studentName = studentname;
+//    }
 
     public Student() {
 
     }
 
     // properties
-    public void setID(int id) {
-        this.studentID = id;
+
+    public int getStudentId() {
+        return studentId;
     }
-    public int getID() {
-        return this.studentID;
+
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
     }
-    public void setStudentName(String studentname) {
-        this.studentName = studentname;
-    }
+
     public String getStudentName() {
-        return this.studentName;
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
+
+    @Override
+    public String toString() {
+        return this.studentId + " " + this.studentName;
     }
 }

@@ -16,41 +16,6 @@
         android:focusable="true"
         android:focusableInTouchMode="true">
 
-        <!--<androidx.appcompat.widget.Toolbar-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:background="@color/colorPrimary">-->
-
-            <!--<RelativeLayout-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content">-->
-
-                <!--<ImageView-->
-                    <!--android:id="@+id/details_edit_button"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_marginEnd="24dp"-->
-                    <!--android:layout_toStartOf="@id/details_save_button"-->
-                    <!--android:clickable="true"-->
-                    <!--android:focusable="true"-->
-                    <!--android:onClick="allowEdit"-->
-                    <!--android:src="@drawable/edit_button_icon" />-->
-
-                <!--<ImageView-->
-                    <!--android:id="@+id/details_save_button"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_alignParentEnd="true"-->
-                    <!--android:layout_marginEnd="32dp"-->
-                    <!--android:clickable="true"-->
-                    <!--android:focusable="true"-->
-                    <!--android:onClick="updatePerson"-->
-                    <!--android:src="@drawable/ic_save_black_24dp" />-->
-
-            <!--</RelativeLayout>-->
-
-        <!--</androidx.appcompat.widget.Toolbar>-->
-
         <EditText
             android:id="@+id/advanced_details_title"
             android:layout_width="match_parent"

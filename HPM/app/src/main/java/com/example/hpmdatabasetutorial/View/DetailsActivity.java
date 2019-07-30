@@ -19,30 +19,36 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import com.example.hpmdatabasetutorial.Model.Person;
+import com.example.hpmdatabasetutorial.Model.Student;
+import com.example.hpmdatabasetutorial.Model.Teacher;
+import com.example.hpmdatabasetutorial.Model.TeacherStudent;
 import com.example.hpmdatabasetutorial.R;
 import com.example.hpmdatabasetutorial.Utils.MyDBHandler;
+import com.example.hpmdatabasetutorial.Utils.NewRoomDB;
 import com.example.hpmdatabasetutorial.Utils.TeacherStudentAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DetailsActivity extends AppCompatActivity {
 
     private EditText detailsTitle;
     private EditText detailsText;
-    private ImageView editButton;
     private ImageView saveButton;
-    private Button assignStudentsButton;
-    private TextView currentStudentsTextview;
     private int type;
-    private ArrayList<Person> students;
-    private Person person;
+    private int receivedId;
+    private List<Student> students;
     private MyDBHandler db;
 
+    private NewRoomDB roomDB;
 
+    private Teacher teacher;
+    private Student student;
     private RecyclerView teacherStudentsRV;
     private TeacherStudentAdapter teacherStudentsAdapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -52,44 +58,48 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        // SQLITE
         db = new MyDBHandler(this);
+
+        // ROOM
+        roomDB = NewRoomDB.getDatabase(this);
 
 //        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        editButton = findViewById(R.id.details_edit_button);
+        ImageView editButton = findViewById(R.id.details_edit_button);
         saveButton = findViewById(R.id.details_save_button);
         detailsText = findViewById(R.id.advanced_details_text);
         detailsTitle = findViewById(R.id.advanced_details_title);
 
-        person = (Person) getIntent().getSerializableExtra("person");
-        type = getIntent().getIntExtra("type", 0);
+//        person = (Person) getIntent().getSerializableExtra("person");
+        receivedId = getIntent().getIntExtra("idToFind",-1);
+        Log.d("Id Received", "onCreate: id received" + receivedId);
+        type = getIntent().getIntExtra("type", 0); //Student = 0 Teacher = 1
 
-        Log.d("AdvancedDetails", "onCreate : " + type);
+        Button assignStudentsButton = findViewById(R.id.teacher_assign_students_button);
 
-        if (person != null) {
-            detailsTitle.setText(person.getName());
-            detailsText.setText(String.valueOf(person.getId()));
-        }
 
-        assignStudentsButton = findViewById(R.id.teacher_assign_students_button);
+
 
         students = new ArrayList<>();
-
-        if (type == 1) {
-
-            if (person != null) {
-                currentStudentsTextview = findViewById(R.id.current_teacher_students_textview);
-                currentStudentsTextview.setVisibility(View.VISIBLE);
-                loadStudentsOfTeacher(person.getId());
-                teacherStudentsRV = findViewById(R.id.teacher_details_rv);
-                teacherStudentsRV.setHasFixedSize(true);
-
-                layoutManager = new LinearLayoutManager(this);
-                teacherStudentsRV.setLayoutManager(layoutManager);
-                teacherStudentsAdapter = new TeacherStudentAdapter(students, this, setAdapterListener());
-                teacherStudentsRV.setAdapter(teacherStudentsAdapter);
-                assignStudentsButton.setVisibility(View.VISIBLE);
-            }
+        if (type == 0){
+            student = roomDB.studentDAO().findById(receivedId);
+            detailsTitle.setText(student.getStudentName());
+            detailsText.setText(String.valueOf(student.getStudentId()));
+        }else {
+            teacher = roomDB.teacherDAO().findById(receivedId);
+            detailsTitle.setText(teacher.getTeacherName());
+            detailsText.setText(String.valueOf(teacher.getTeacherId()));
+            TextView currentStudentsTextview = findViewById(R.id.current_teacher_students_textview);
+            currentStudentsTextview.setVisibility(View.VISIBLE);
+            loadStudentsOfTeacher(teacher.getTeacherId());
+            teacherStudentsRV = findViewById(R.id.teacher_details_rv);
+            teacherStudentsRV.setHasFixedSize(true);
+            layoutManager = new LinearLayoutManager(this);
+            teacherStudentsRV.setLayoutManager(layoutManager);
+            teacherStudentsAdapter = new TeacherStudentAdapter(students, this, setAdapterListener());
+            teacherStudentsRV.setAdapter(teacherStudentsAdapter);
+            assignStudentsButton.setVisibility(View.VISIBLE);
         }
 
 
@@ -118,7 +128,7 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void loadStudentsOfTeacher(int teacherId) {
-        students = db.loadTeacherStudents(teacherId);
+        students = roomDB.teacherStudentDAO().getStudentsForTeacher(teacherId);
     }
 
     public void allowEdit() {
@@ -127,20 +137,39 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     public void updatePerson() {
-        MyDBHandler dbHandler = new MyDBHandler(this);
-        boolean result = dbHandler.updateHandler(Integer.parseInt(
-                detailsText.getText().toString()), detailsTitle.getText().toString(), type);
-        if (result) {
+        //SQLITE
+//        MyDBHandler dbHandler = new MyDBHandler(this);
+//        boolean result = dbHandler.updateHandler(Integer.parseInt(
+//                detailsText.getText().toString()), detailsTitle.getText().toString(), type);
+//        if (result) {
+//            detailsText.setEnabled(false);
+//            detailsTitle.setEnabled(false);
+//        } else
+//            Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+        if(type == 0){
+            Student updated = new Student();
+            updated.setStudentId(student.getStudentId());
+            updated.setStudentName(detailsTitle.getText().toString());
+            roomDB.studentDAO().updateStudent(updated);
             detailsText.setEnabled(false);
             detailsTitle.setEnabled(false);
-        } else
-            Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Update Success", Toast.LENGTH_SHORT).show();
+        } else {
+            Teacher updated = new Teacher();
+            updated.setTeacherId(teacher.getTeacherId());
+            updated.setTeacherName(detailsTitle.getText().toString());
+            roomDB.teacherDAO().updateTeacher(updated);
+            detailsText.setEnabled(false);
+            detailsTitle.setEnabled(false);
+            Toast.makeText(this, "Update Success", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 
     public void openSeeAllStudentsActivity(View view) {
         Intent intent = new Intent(this, ViewStudentsForTeacher.class);
-        intent.putExtra("teacherId", person.getId());
+        intent.putExtra("teacherId", teacher.getTeacherId());
         startActivityForResult(intent, 1);
     }
 
@@ -148,8 +177,10 @@ public class DetailsActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == -1) {
-            students = db.loadTeacherStudents(person.getId());
+//            students = db.loadTeacherStudents(teacher.getTeacherId());
+            students = roomDB.teacherStudentDAO().getStudentsForTeacher(teacher.getTeacherId());
             teacherStudentsAdapter.setStudentsList(students);
+
         }
     }
 
@@ -163,8 +194,11 @@ public class DetailsActivity extends AppCompatActivity {
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        db.deassignStudent((int) teacherStudentsAdapter.getItemId(position), person.getId());
-                        students = db.loadTeacherStudents(person.getId());
+//                        db.deassignStudent((int) teacherStudentsAdapter.getItemId(position), teacher.getTeacherId());
+//                        students = db.loadTeacherStudents(teacher.getTeacherId());
+                        TeacherStudent pair = new TeacherStudent((int)teacherStudentsAdapter.getItemId(position),teacher.getTeacherId());
+                        roomDB.teacherStudentDAO().delete(pair);
+                        students = roomDB.teacherStudentDAO().getStudentsForTeacher(teacher.getTeacherId());
                         teacherStudentsAdapter.setStudentsList(students);
                         Toast.makeText(getApplicationContext(), "Removed!", Toast.LENGTH_SHORT).show();
                     }

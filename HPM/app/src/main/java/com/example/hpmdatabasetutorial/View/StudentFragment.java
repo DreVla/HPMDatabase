@@ -5,23 +5,27 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hpmdatabasetutorial.Model.Person;
+import com.example.hpmdatabasetutorial.Model.Student;
 import com.example.hpmdatabasetutorial.R;
 import com.example.hpmdatabasetutorial.Utils.MyDBHandler;
-import com.example.hpmdatabasetutorial.Utils.RecyclerViewAdapter;
+import com.example.hpmdatabasetutorial.Utils.NewRoomDB;
+import com.example.hpmdatabasetutorial.Utils.StudentFragmentAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
 /**
@@ -32,10 +36,9 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
 
     private MyDBHandler db;
     private ArrayList<Person> listStudents = new ArrayList<>();
-    private RecyclerView recyclerView;
-    private RecyclerViewAdapter adapter;
-    private FloatingActionButton addStudentButton;
-    private ImageView removeButton;
+    private StudentFragmentAdapter adapter;
+    private NewRoomDB roomDB;
+    private List<Student> roomListStudents;
 
     public StudentFragment() {
         // Required empty public constructor
@@ -46,25 +49,31 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        db = new MyDBHandler(this.getContext());
-
         View viewRoot = inflater.inflate(R.layout.fragment_student, container, false);
 
-        recyclerView = viewRoot.findViewById(R.id.student_recycler_view);
+        //SQLITE
+//        db = new MyDBHandler(this.getContext());
+//        listStudents = db.loadHandler(0);
+
+        //ROOM
+        roomDB = NewRoomDB.getDatabase(this.getContext());
+
+        roomListStudents = roomDB.studentDAO().getStudents();
+
+        RecyclerView recyclerView = viewRoot.findViewById(R.id.student_recycler_view);
 
         recyclerView.setHasFixedSize(true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext(), RecyclerView.VERTICAL, false);
 
         recyclerView.setLayoutManager(linearLayoutManager);
-        listStudents = db.loadHandler(0);
-        adapter = new RecyclerViewAdapter(listStudents, this.getContext(), setAdapterListener());
+
+        adapter = new StudentFragmentAdapter(roomListStudents, this.getContext(), setAdapterListener());
 
         recyclerView.setAdapter(adapter);
 
-        addStudentButton = viewRoot.findViewById(R.id.student_fab);
+        FloatingActionButton addStudentButton = viewRoot.findViewById(R.id.student_fab);
         addStudentButton.setOnClickListener(this);
-        removeButton = viewRoot.findViewById(R.id.remove_item_from_rv);
 
         return viewRoot;
 
@@ -72,12 +81,10 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.student_fab:
-                Intent intent = new Intent(getActivity(), AddPersonActivity.class);
-                intent.putExtra("persons", 0);
-                startActivityForResult(intent, 1);
-                break;
+        if (view.getId() == R.id.student_fab) {
+            Intent intent = new Intent(getActivity(), AddPersonActivity.class);
+            intent.putExtra("persons", 0);
+            startActivityForResult(intent, 1);
         }
     }
 
@@ -89,8 +96,8 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public RecyclerViewAdapter.MyAdapterListener setAdapterListener() {
-        return new RecyclerViewAdapter.MyAdapterListener() {
+    public StudentFragmentAdapter.MyAdapterListener setAdapterListener() {
+        return new StudentFragmentAdapter.MyAdapterListener() {
             @Override
             public void iconImageViewOnClick(View v, final int position) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -99,12 +106,17 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        boolean result = db.deleteHandler((int) adapter.getItemId(position), 0);
-                        if (result) {
-                            Toast.makeText(getContext(), "Removed!", Toast.LENGTH_SHORT).show();
-                            reloadRV();
-                        } else
-                            Toast.makeText(getContext(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                        //SQLITE
+//                        boolean result = db.deleteHandler((int) adapter.getItemId(position), 0);
+//                        if (result) {
+//                            Toast.makeText(getContext(), "Removed!", Toast.LENGTH_SHORT).show();
+//                            reloadRV();
+//                        } else
+//                            Toast.makeText(getContext(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+
+                        //ROOM
+                        roomDB.studentDAO().deleteStudent((Student) adapter.getItem(position));
+                        reloadRV();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -119,9 +131,13 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onItemClicked(int position) {
-                Person selected = db.findHandler(listStudents.get(position).getId(), 0);
+//                Person selected = db.findHandler(listStudents.get(position).getId(), 0);
+//                Student selected = roomDB.studentDAO().findById(roomListStudents.get(position).getId());
+//                Log.d("Selected ID:", "onItemClicked: id is " + selected.getStudentId() + " " + selected.getStudentName());
+                int id = (int) adapter.getItemId(position);
+                Log.d("Id sent", "onItemClicked: id sent" + id);
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                intent.putExtra("person", selected);
+                intent.putExtra("idToFind", id);
                 intent.putExtra("type", 0);
                 startActivityForResult(intent, 1);
             }
@@ -137,7 +153,10 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
     // method to easily reload recycler view
 
     public void reloadRV(){
-        listStudents = db.loadHandler(0);
-        adapter.setPersonList(listStudents);
+//        listStudents = db.loadHandler(0);
+//        adapter.setPersonList(listStudents);
+        roomListStudents = roomDB.studentDAO().getStudents();
+        adapter.setStudentList(roomListStudents);
+        adapter.notifyDataSetChanged();
     }
 }

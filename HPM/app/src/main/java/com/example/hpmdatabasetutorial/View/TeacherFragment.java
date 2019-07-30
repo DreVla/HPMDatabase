@@ -8,19 +8,22 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hpmdatabasetutorial.Model.Person;
+import com.example.hpmdatabasetutorial.Model.Teacher;
 import com.example.hpmdatabasetutorial.R;
 import com.example.hpmdatabasetutorial.Utils.MyDBHandler;
-import com.example.hpmdatabasetutorial.Utils.RecyclerViewAdapter;
+import com.example.hpmdatabasetutorial.Utils.NewRoomDB;
+import com.example.hpmdatabasetutorial.Utils.StudentFragmentAdapter;
+import com.example.hpmdatabasetutorial.Utils.TeacherFragmentAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -30,9 +33,10 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
 
     private MyDBHandler db;
     private ArrayList<Person> listTeachers = new ArrayList<>();
-    private RecyclerView recyclerView;
-    private RecyclerViewAdapter adapter;
+    private TeacherFragmentAdapter adapter;
     private FloatingActionButton addTeacherButton;
+    private NewRoomDB roomDB;
+    private List<Teacher> roomListTeachers;
 
 
     public TeacherFragment() {
@@ -44,19 +48,25 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        db = new MyDBHandler(this.getContext());
-
         View viewRoot = inflater.inflate(R.layout.fragment_student, container, false);
 
-        recyclerView = viewRoot.findViewById(R.id.student_recycler_view);
+        //ROOM
+//        db = new MyDBHandler(this.getContext());
+//        listTeachers = db.loadHandler(1);
+
+        //SQLITE
+        roomDB = NewRoomDB.getDatabase(this.getContext());
+        roomListTeachers = roomDB.teacherDAO().getAllTeachers();
+
+        RecyclerView recyclerView = viewRoot.findViewById(R.id.student_recycler_view);
 
         recyclerView.setHasFixedSize(true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext(), RecyclerView.VERTICAL, false);
 
         recyclerView.setLayoutManager(linearLayoutManager);
-        listTeachers = db.loadHandler(1);
-        adapter = new RecyclerViewAdapter(db.loadHandler(1), this.getContext(), setAdapterListener());
+
+        adapter = new TeacherFragmentAdapter(roomListTeachers, this.getContext(), setAdapterListener());
 
         recyclerView.setAdapter(adapter);
 
@@ -83,8 +93,8 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public RecyclerViewAdapter.MyAdapterListener setAdapterListener() {
-        return new RecyclerViewAdapter.MyAdapterListener() {
+    public TeacherFragmentAdapter.MyAdapterListener setAdapterListener() {
+        return new TeacherFragmentAdapter.MyAdapterListener() {
             @Override
             public void iconImageViewOnClick(View v, final int position) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -93,12 +103,15 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        boolean result = db.deleteHandler((int) adapter.getItemId(position), 1);
-                        if (result) {
-                            Toast.makeText(getContext(), "Removed!", Toast.LENGTH_SHORT).show();
-                            reloadRV();
-                        } else
-                            Toast.makeText(getContext(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+//                        boolean result = db.deleteHandler((int) adapter.getItemId(position), 1);
+//                        if (result) {
+//                            Toast.makeText(getContext(), "Removed!", Toast.LENGTH_SHORT).show();
+//                            reloadRV();
+//                        } else
+//                            Toast.makeText(getContext(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+
+                        roomDB.teacherDAO().deleteTeacher((Teacher) adapter.getItem(position));
+                        reloadRV();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -113,9 +126,12 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onItemClicked(int position) {
-                Person selected = db.findHandler(listTeachers.get(position).getId(), 1);
+
+                //SQLITE
+//                Person selected = db.findHandler(listTeachers.get(position).getId(), 1);
+                int id = roomListTeachers.get(position).getTeacherId();
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                intent.putExtra("person", selected);
+                intent.putExtra("idToFind", id);
                 intent.putExtra("type", 1);
                 startActivityForResult(intent, 1);
             }
@@ -129,8 +145,11 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
     }
 
     public void reloadRV(){
-        listTeachers = db.loadHandler(1);
-        adapter.setPersonList(listTeachers);
+//        listTeachers = db.loadHandler(1);
+//        adapter.setPersonList(listTeachers);
+        roomListTeachers = roomDB.teacherDAO().getAllTeachers();
+        adapter.setPersonList(roomListTeachers);
+        adapter.notifyDataSetChanged();
     }
 
 }

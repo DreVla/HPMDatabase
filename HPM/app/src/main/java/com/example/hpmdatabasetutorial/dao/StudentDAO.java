@@ -1,0 +1,31 @@
+package com.example.hpmdatabasetutorial.dao;
+
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.Query;
+import androidx.room.Update;
+
+import com.example.hpmdatabasetutorial.Model.Student;
+
+import java.util.List;
+
+
+@Dao
+public interface StudentDAO {
+
+    @Insert
+    void insertStudent(Student student);
+
+    @Delete
+    void deleteStudent(Student student);
+
+    @Update
+    void updateStudent(Student student);
+
+    @Query("SELECT * FROM student")
+    List<Student> getStudents();
+
+    @Query("SELECT * FROM student WHERE student_id=:id")
+    Student findById(int id);
+}

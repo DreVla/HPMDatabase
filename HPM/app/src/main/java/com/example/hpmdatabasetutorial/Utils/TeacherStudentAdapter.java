@@ -10,17 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hpmdatabasetutorial.Model.Person;
+import com.example.hpmdatabasetutorial.Model.Student;
 import com.example.hpmdatabasetutorial.R;
 import com.example.hpmdatabasetutorial.View.DetailsActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TeacherStudentAdapter extends RecyclerView.Adapter<TeacherStudentAdapter.TeacherStudentViewHolder> {
 
-    private ArrayList<Person> students;
+    private List<Student> students;
     public MyAdapterListener onClickListener;
 
-    public TeacherStudentAdapter(ArrayList<Person> students, DetailsActivity detailsActivity, MyAdapterListener myAdapterListener) {
+    public TeacherStudentAdapter(List<Student> students, DetailsActivity detailsActivity, MyAdapterListener myAdapterListener) {
         this.students = students;
         onClickListener = myAdapterListener;
     }
@@ -34,7 +36,7 @@ public class TeacherStudentAdapter extends RecyclerView.Adapter<TeacherStudentAd
 
     @Override
     public void onBindViewHolder(@NonNull TeacherStudentViewHolder holder, int position) {
-        holder.studentName.setText(students.get(position).getName());
+        holder.studentName.setText(students.get(position).getStudentName());
     }
 
     @Override
@@ -44,11 +46,11 @@ public class TeacherStudentAdapter extends RecyclerView.Adapter<TeacherStudentAd
 
     @Override
     public long getItemId(int position) {
-        return students.get(position).getId();
+        return students.get(position).getStudentId();
     }
 
 
-    public void setStudentsList(ArrayList<Person> personList) {
+    public void setStudentsList(List<Student> personList) {
         this.students = personList;
         notifyDataSetChanged();
     }
