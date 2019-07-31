@@ -11,11 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hpmdatabasetutorial.Model.Person;
 import com.example.hpmdatabasetutorial.Model.Student;
+import com.example.hpmdatabasetutorial.Model.Teacher;
 import com.example.hpmdatabasetutorial.R;
 import com.example.hpmdatabasetutorial.Utils.MyDBHandler;
 import com.example.hpmdatabasetutorial.Utils.NewRoomDB;
@@ -24,8 +26,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
 /**
@@ -58,7 +58,16 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
         //ROOM
         roomDB = NewRoomDB.getDatabase(this.getContext());
 
-        roomListStudents = roomDB.studentDAO().getStudents();
+        roomListStudents = new ArrayList<>();
+
+        adapter = new StudentFragmentAdapter(this.getContext(), setAdapterListener());
+
+        roomDB.studentDAO().getStudents().observe(this, new Observer<List<Student>>() {
+            @Override
+            public void onChanged(List<Student> studentList) {
+                adapter.setStudentList(studentList);
+            }
+        });
 
         RecyclerView recyclerView = viewRoot.findViewById(R.id.student_recycler_view);
 
@@ -68,7 +77,6 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
 
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        adapter = new StudentFragmentAdapter(roomListStudents, this.getContext(), setAdapterListener());
 
         recyclerView.setAdapter(adapter);
 
@@ -115,8 +123,9 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
 //                            Toast.makeText(getContext(), "Something went wrong!", Toast.LENGTH_SHORT).show();
 
                         //ROOM
+                        roomDB.teacherStudentDAO().deleteStudentEntries((int) adapter.getItemId(position));
                         roomDB.studentDAO().deleteStudent((Student) adapter.getItem(position));
-                        reloadRV();
+//                        reloadRV();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -147,16 +156,16 @@ public class StudentFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        reloadRV();
+//        reloadRV();
     }
 
     // method to easily reload recycler view
 
-    public void reloadRV(){
+    public void reloadRV() {
 //        listStudents = db.loadHandler(0);
 //        adapter.setPersonList(listStudents);
-        roomListStudents = roomDB.studentDAO().getStudents();
-        adapter.setStudentList(roomListStudents);
-        adapter.notifyDataSetChanged();
+//        roomListStudents = roomDB.studentDAO().getStudents();
+//        adapter.setStudentList(roomListStudents);
+//        adapter.notifyDataSetChanged();
     }
 }

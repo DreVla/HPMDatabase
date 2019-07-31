@@ -11,24 +11,35 @@ import com.example.hpmdatabasetutorial.View.TeacherFragment;
 
 public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
-    public MyPagerAdapter(FragmentManager fm){
+    public MyPagerAdapter(FragmentManager fm) {
         super(fm);
     }
-    @Override    public Fragment getItem(int position) {
-        switch (position){
-            case 0: return new StudentFragment();
-            case 1: return new TeacherFragment();
+
+    @Override
+    public Fragment getItem(int position) {
+        switch (position) {
+            case 0:
+                return new StudentFragment();
+            case 1:
+                return new TeacherFragment();
         }
         return null;
     }
+
     @Override
     public int getCount() {
         return 2;
     }
-    @Override    public CharSequence getPageTitle(int position) {        switch (position){
-        case 0: return "Students";
-        case 1: return "Teachers";
-        default: return null;
-    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        switch (position) {
+            case 0:
+                return "Students";
+            case 1:
+                return "Teachers";
+            default:
+                return null;
+        }
     }
 }

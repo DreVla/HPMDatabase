@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hpmdatabasetutorial.Model.Person;
 import com.example.hpmdatabasetutorial.Model.Student;
-import com.example.hpmdatabasetutorial.Model.Teacher;
 import com.example.hpmdatabasetutorial.R;
 
 import java.util.List;
@@ -23,15 +22,14 @@ public class StudentFragmentAdapter extends RecyclerView.Adapter<StudentFragment
     private List<Student> studentList;
     public MyAdapterListener onClickListener;
 
-    public StudentFragmentAdapter(List<Student> studentList, Context context, MyAdapterListener listener){
-        this.studentList = studentList;
+    public StudentFragmentAdapter(Context context, MyAdapterListener listener) {
         onClickListener = listener;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -43,7 +41,10 @@ public class StudentFragmentAdapter extends RecyclerView.Adapter<StudentFragment
 
     @Override
     public int getItemCount() {
-        return studentList.size();
+        if(studentList == null){
+            return 0;
+        } else
+            return studentList.size();
     }
 
     @Override
@@ -60,7 +61,7 @@ public class StudentFragmentAdapter extends RecyclerView.Adapter<StudentFragment
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView nameTextView;
         public ImageView deleteButton;
@@ -87,6 +88,7 @@ public class StudentFragmentAdapter extends RecyclerView.Adapter<StudentFragment
 
     public interface MyAdapterListener {
         void iconImageViewOnClick(View v, int position);
+
         void onItemClicked(int position);
     }
 }

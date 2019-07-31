@@ -22,15 +22,14 @@ public class TeacherFragmentAdapter extends RecyclerView.Adapter<TeacherFragment
     private List<Teacher> teacherList;
     public MyAdapterListener onClickListener;
 
-    public TeacherFragmentAdapter(List<Teacher> teacherList, Context context, MyAdapterListener listener){
-        this.teacherList = teacherList;
+    public TeacherFragmentAdapter(Context context, MyAdapterListener listener) {
         onClickListener = listener;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -42,7 +41,10 @@ public class TeacherFragmentAdapter extends RecyclerView.Adapter<TeacherFragment
 
     @Override
     public int getItemCount() {
-        return teacherList.size();
+        if(teacherList == null){
+            return 0;
+        }else
+            return teacherList.size();
     }
 
     @Override
@@ -50,7 +52,7 @@ public class TeacherFragmentAdapter extends RecyclerView.Adapter<TeacherFragment
         return teacherList.get(position).getTeacherId();
     }
 
-    public Person getItem(int position) {
+    public Teacher getItem(int position) {
         return teacherList.get(position);
     }
 
@@ -59,7 +61,7 @@ public class TeacherFragmentAdapter extends RecyclerView.Adapter<TeacherFragment
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView nameTextView;
         public ImageView deleteButton;
@@ -86,6 +88,7 @@ public class TeacherFragmentAdapter extends RecyclerView.Adapter<TeacherFragment
 
     public interface MyAdapterListener {
         void iconImageViewOnClick(View v, int position);
+
         void onItemClicked(int position);
     }
 }

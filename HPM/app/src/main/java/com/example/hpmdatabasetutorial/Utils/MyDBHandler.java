@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.hpmdatabasetutorial.Model.Person;
-import com.example.hpmdatabasetutorial.Model.Student;
 import com.example.hpmdatabasetutorial.Model.Teacher;
 
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
         String CREATE_TABLE_TEACHER_STUDENT = "CREATE TABLE " + TABLE_TEACHER_STUDENT + "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_TEACHER_ID + " INTEGER, " +
-                COLUMN_STUDENT_ID + " INTEGER) " ;
+                COLUMN_STUDENT_ID + " INTEGER) ";
         db.execSQL(CREATE_TABLE_TEACHER_STUDENT);
 
     }
@@ -120,7 +119,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public boolean deleteHandler(int ID, int pos) {
         boolean result = false;
         SQLiteDatabase db = this.getWritableDatabase();
-        String query1,query2;
+        String query1, query2;
         String actionTable, actionColumn;
         if (pos == 0) {
             actionTable = TABLE_STUDENT;
@@ -133,7 +132,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
             query1 = "SELECT*FROM " + TABLE_TEACHER + " WHERE " + COLUMN_ID + "= '" + ID + "'";
             query2 = "SELECT*FROM " + TABLE_TEACHER_STUDENT + " WHERE " + COLUMN_TEACHER_ID + "= '" + ID + "'";
         }
-        Cursor cursor = db.rawQuery(query1,null);
+        Cursor cursor = db.rawQuery(query1, null);
         Person person = new Person();
         if (cursor.moveToFirst()) {
             person.setId(Integer.parseInt(cursor.getString(0)));
@@ -149,7 +148,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
             cursor.close();
             result = true;
         }
-            db.close();
+        db.close();
         return result;
     }
 
@@ -212,7 +211,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public void deassignStudent(int studentId, int idTeacher) {
         SQLiteDatabase db = this.getWritableDatabase();
         String[] args = {String.valueOf(idTeacher), String.valueOf(studentId)};
-        db.delete("TeacherStudentDAO", "teacherID=? and studentID=?",args);
+        db.delete("TeacherStudentDAO", "teacherID=? and studentID=?", args);
         db.close();
     }
 

@@ -1,5 +1,6 @@
 package com.example.hpmdatabasetutorial.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -24,7 +25,7 @@ public interface TeacherDAO {
     void updateTeacher(Teacher teacher);
 
     @Query("SELECT * FROM teacher")
-    List<Teacher> getAllTeachers();
+    LiveData<List<Teacher>> getAllTeachers();
 
     @Query("SELECT * FROM teacher WHERE teacher_id=:id")
     Teacher findById(int id);

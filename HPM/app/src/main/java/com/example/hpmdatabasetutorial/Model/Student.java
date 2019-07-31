@@ -6,25 +6,28 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "student")
-public class Student extends Person{
+public class Student extends Person {
     // fields
     @ColumnInfo(name = "student_id")
     @PrimaryKey(autoGenerate = true)
     private int studentId;
     @ColumnInfo(name = "student_name")
     private String studentName;
+    @Ignore
+    private boolean isAdded;
 
     // constructors
     @Ignore
     public Student(String studentName) {
         super(studentName);
     }
-//    @Ignore
-//    public Student(int id, String studentname) {
-//        super(id, studentname);
-//        this.studentId = id;
-//        this.studentName = studentname;
-//    }
+
+    @Ignore
+    public Student(int id, String studentname) {
+        super(id, studentname);
+        this.studentId = id;
+        this.studentName = studentname;
+    }
 
     public Student() {
 
@@ -51,5 +54,13 @@ public class Student extends Person{
     @Override
     public String toString() {
         return this.studentId + " " + this.studentName;
+    }
+
+    public boolean isAdded() {
+        return isAdded;
+    }
+
+    public void setAdded(boolean added) {
+        isAdded = added;
     }
 }

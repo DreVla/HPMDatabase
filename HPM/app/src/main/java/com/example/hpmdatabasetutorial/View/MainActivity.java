@@ -1,9 +1,5 @@
 package com.example.hpmdatabasetutorial.View;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -11,7 +7,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.hpmdatabasetutorial.Model.Person;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+
 import com.example.hpmdatabasetutorial.R;
 import com.example.hpmdatabasetutorial.Utils.MyDBHandler;
 import com.example.hpmdatabasetutorial.Utils.MyPagerAdapter;
@@ -26,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     public int spinnerPos;
 
     public TextView lst;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

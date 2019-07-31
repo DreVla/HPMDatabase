@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,7 +19,6 @@ import com.example.hpmdatabasetutorial.Model.Teacher;
 import com.example.hpmdatabasetutorial.R;
 import com.example.hpmdatabasetutorial.Utils.MyDBHandler;
 import com.example.hpmdatabasetutorial.Utils.NewRoomDB;
-import com.example.hpmdatabasetutorial.Utils.StudentFragmentAdapter;
 import com.example.hpmdatabasetutorial.Utils.TeacherFragmentAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -50,13 +50,23 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View viewRoot = inflater.inflate(R.layout.fragment_student, container, false);
 
-        //ROOM
+        //SQLITE
 //        db = new MyDBHandler(this.getContext());
 //        listTeachers = db.loadHandler(1);
 
-        //SQLITE
+        //Room
         roomDB = NewRoomDB.getDatabase(this.getContext());
-        roomListTeachers = roomDB.teacherDAO().getAllTeachers();
+//        roomListTeachers = roomDB.teacherDAO().getAllTeachers();
+        roomListTeachers = new ArrayList<>();
+
+        adapter = new TeacherFragmentAdapter(this.getContext(), setAdapterListener());
+
+        roomDB.teacherDAO().getAllTeachers().observe(this, new Observer<List<Teacher>>() {
+            @Override
+            public void onChanged(List<Teacher> teacherList) {
+                adapter.setPersonList(teacherList);
+            }
+        });
 
         RecyclerView recyclerView = viewRoot.findViewById(R.id.student_recycler_view);
 
@@ -65,8 +75,6 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext(), RecyclerView.VERTICAL, false);
 
         recyclerView.setLayoutManager(linearLayoutManager);
-
-        adapter = new TeacherFragmentAdapter(roomListTeachers, this.getContext(), setAdapterListener());
 
         recyclerView.setAdapter(adapter);
 
@@ -89,7 +97,7 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == -1) {
-            reloadRV();
+//            reloadRV();
         }
     }
 
@@ -109,9 +117,9 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
 //                            reloadRV();
 //                        } else
 //                            Toast.makeText(getContext(), "Something went wrong!", Toast.LENGTH_SHORT).show();
-
-                        roomDB.teacherDAO().deleteTeacher((Teacher) adapter.getItem(position));
-                        reloadRV();
+                        roomDB.teacherStudentDAO().deleteTeacherEntries((int) adapter.getItemId(position));
+                        roomDB.teacherDAO().deleteTeacher(adapter.getItem(position));
+//                        reloadRV();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -129,7 +137,7 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
 
                 //SQLITE
 //                Person selected = db.findHandler(listTeachers.get(position).getId(), 1);
-                int id = roomListTeachers.get(position).getTeacherId();
+                int id = (int) adapter.getItemId(position);
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
                 intent.putExtra("idToFind", id);
                 intent.putExtra("type", 1);
@@ -141,15 +149,15 @@ public class TeacherFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        reloadRV();
+//        reloadRV();
     }
 
-    public void reloadRV(){
+    public void reloadRV() {
 //        listTeachers = db.loadHandler(1);
 //        adapter.setPersonList(listTeachers);
-        roomListTeachers = roomDB.teacherDAO().getAllTeachers();
-        adapter.setPersonList(roomListTeachers);
-        adapter.notifyDataSetChanged();
+//        roomListTeachers = roomDB.teacherDAO().getAllTeachers();
+//        adapter.setPersonList(roomListTeachers);
+//        adapter.notifyDataSetChanged();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.hpmdatabasetutorial.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -23,7 +24,7 @@ public interface TeacherStudentDAO {
     @Query("SELECT * FROM student INNER JOIN teacher_student ON " +
             "student_id=ts_student_id WHERE " +
             "teacher_student.ts_teacher_id=:teacherId")
-    List<Student> getStudentsForTeacher(final int teacherId);
+    LiveData<List<Student>> getStudentsForTeacher(final int teacherId);
 
     @Query("SELECT * FROM teacher INNER JOIN teacher_student ON " +
             "teacher_id=ts_teacher_id WHERE " +
@@ -32,5 +33,11 @@ public interface TeacherStudentDAO {
 
     @Query("SELECT * FROM teacher_student WHERE ts_student_id=:studentId AND ts_teacher_id=:teacherId")
     boolean checkIfStudentAssigned(int studentId, int teacherId);
+
+    @Query("DELETE FROM teacher_student WHERE ts_teacher_id=:teacherId")
+    void deleteTeacherEntries(int teacherId);
+
+    @Query("DELETE FROM teacher_student WHERE ts_student_id=:studentId")
+    void deleteStudentEntries(int studentId);
 
 }

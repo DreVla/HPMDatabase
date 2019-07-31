@@ -5,9 +5,6 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity(tableName = "teacher")
 public class Teacher extends Person {
 
@@ -23,13 +20,13 @@ public class Teacher extends Person {
     public Teacher(String teacherName) {
         super(teacherName);
     }
-//
-//    @Ignore
-//    public Teacher(int id, String teacherName) {
-//        super(teacherName);
-//        this.teacherId = id;
-//        this.teacherName = teacherName;
-//    }
+
+    @Ignore
+    public Teacher(int id, String teacherName) {
+        super(teacherName);
+        this.teacherId = id;
+        this.teacherName = teacherName;
+    }
 
     public Teacher() {
 

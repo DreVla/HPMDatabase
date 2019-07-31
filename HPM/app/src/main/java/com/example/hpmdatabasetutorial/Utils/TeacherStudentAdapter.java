@@ -9,12 +9,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.hpmdatabasetutorial.Model.Person;
 import com.example.hpmdatabasetutorial.Model.Student;
 import com.example.hpmdatabasetutorial.R;
 import com.example.hpmdatabasetutorial.View.DetailsActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TeacherStudentAdapter extends RecyclerView.Adapter<TeacherStudentAdapter.TeacherStudentViewHolder> {
@@ -22,8 +20,7 @@ public class TeacherStudentAdapter extends RecyclerView.Adapter<TeacherStudentAd
     private List<Student> students;
     public MyAdapterListener onClickListener;
 
-    public TeacherStudentAdapter(List<Student> students, DetailsActivity detailsActivity, MyAdapterListener myAdapterListener) {
-        this.students = students;
+    public TeacherStudentAdapter(DetailsActivity detailsActivity, MyAdapterListener myAdapterListener) {
         onClickListener = myAdapterListener;
     }
 
@@ -41,7 +38,10 @@ public class TeacherStudentAdapter extends RecyclerView.Adapter<TeacherStudentAd
 
     @Override
     public int getItemCount() {
-        return students.size();
+        if(students == null){
+            return 0;
+        }else
+            return students.size();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class TeacherStudentAdapter extends RecyclerView.Adapter<TeacherStudentAd
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                     onClickListener.iconImageViewOnClick(view, getAdapterPosition());
+                    onClickListener.iconImageViewOnClick(view, getAdapterPosition());
                 }
             });
         }
