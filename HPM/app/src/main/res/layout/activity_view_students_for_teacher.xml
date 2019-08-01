@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".View.ViewStudentsForTeacher"
-    android:layout_margin="8dp">
+    tools:context=".view.ui.ViewStudentsForTeacher">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/teacher_see_all_students_rv"
@@ -22,8 +20,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="64dp"
-        android:src="@drawable/ic_done_black_24dp"
         android:onClick="assignStudentsToTeacher"
-        />
+        android:src="@drawable/ic_done_black_24dp" />
 
 </RelativeLayout>

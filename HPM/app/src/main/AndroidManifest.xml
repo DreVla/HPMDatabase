@@ -9,10 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".View.ViewStudentsForTeacher"></activity>
-        <activity android:name=".View.DetailsActivity" />
-        <activity android:name=".View.AddPersonActivity" />
-        <activity android:name=".View.MainActivity">
+        <activity android:name=".view.ui.ViewStudentsForTeacher"></activity>
+        <activity android:name=".view.ui.DetailsActivity" />
+        <activity android:name=".view.ui.AddPersonActivity"
+            android:windowSoftInputMode="stateVisible"/>
+        <activity android:name=".view.ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -3,27 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".View.StudentFragment">
+    tools:context=".view.ui.StudentFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/student_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        >
+        android:layout_height="wrap_content">
 
     </androidx.recyclerview.widget.RecyclerView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/student_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/student_fab"
+        android:layout_above="@id/student_recycler_view"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="64dp"
-        android:layout_above="@id/student_recycler_view"
-        android:src="@drawable/ic_add_button"
-        />
+        android:src="@drawable/ic_add_button" />
 
 
 </RelativeLayout>
